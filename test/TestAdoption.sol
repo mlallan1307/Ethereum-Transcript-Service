@@ -37,15 +37,4 @@ contract TestAdoption {
     Assert.equal(adopters[8], expected, "Owner of pet ID 8 should be recorded.");
   }
 
-  // Testing retrieval of all pet owners
-  function testTsRequest() public {
-    bytes32 key_test = "super secret";
-
-    adoption.sendTsRequest(key_test);
-
-    bytes32 rtnMsg = adoption.getTsRequest();
-
-    Assert.equal(rtnMsg, key_test, "Test message failed");
-  }
-
 }

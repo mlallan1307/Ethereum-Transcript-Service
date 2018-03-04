@@ -1,7 +1,7 @@
 var Adoption = artifacts.require("Adoption");
-var Transcript = artifacts.require("Transcript");
+var TranscriptReq = artifacts.require("TranscriptReq");
 
 module.exports = function(deployer) {
   deployer.deploy(Adoption);
-  deployer.deploy(Transcript);
+  deployer.deploy(TranscriptReq);
 };
