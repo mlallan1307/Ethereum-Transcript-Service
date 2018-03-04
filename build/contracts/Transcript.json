@@ -1,0 +1,416 @@
+{
+  "contractName": "Transcript",
+  "abi": [
+    {
+      "constant": true,
+      "inputs": [],
+      "name": "requestors_key",
+      "outputs": [
+        {
+          "name": "",
+          "type": "bytes32"
+        }
+      ],
+      "payable": false,
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "constant": false,
+      "inputs": [
+        {
+          "name": "req_key",
+          "type": "bytes32"
+        }
+      ],
+      "name": "sendTsRequest",
+      "outputs": [
+        {
+          "name": "",
+          "type": "bool"
+        }
+      ],
+      "payable": false,
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "constant": true,
+      "inputs": [],
+      "name": "getTsRequest",
+      "outputs": [
+        {
+          "name": "",
+          "type": "bytes32"
+        }
+      ],
+      "payable": false,
+      "stateMutability": "view",
+      "type": "function"
+    }
+  ],
+  "bytecode": "0x6060604052341561000f57600080fd5b61014e8061001e6000396000f300606060405260043610610057576000357c0100000000000000000000000000000000000000000000000000000000900463ffffffff168063026669a91461005c5780637ead2e311461008d578063d06b0144146100cc575b600080fd5b341561006757600080fd5b61006f6100fd565b60405180826000191660001916815260200191505060405180910390f35b341561009857600080fd5b6100b2600480803560001916906020019091905050610106565b604051808215151515815260200191505060405180910390f35b34156100d757600080fd5b6100df61011c565b60405180826000191660001916815260200191505060405180910390f35b60008054905090565b6000816000816000191690555060019050919050565b600054815600a165627a7a72305820736b3cd475e2fb9566138c381791a1fc30fc85168b3b0748a69ab10a90ac19bc0029",
+  "deployedBytecode": "0x606060405260043610610057576000357c0100000000000000000000000000000000000000000000000000000000900463ffffffff168063026669a91461005c5780637ead2e311461008d578063d06b0144146100cc575b600080fd5b341561006757600080fd5b61006f6100fd565b60405180826000191660001916815260200191505060405180910390f35b341561009857600080fd5b6100b2600480803560001916906020019091905050610106565b604051808215151515815260200191505060405180910390f35b34156100d757600080fd5b6100df61011c565b60405180826000191660001916815260200191505060405180910390f35b60008054905090565b6000816000816000191690555060019050919050565b600054815600a165627a7a72305820736b3cd475e2fb9566138c381791a1fc30fc85168b3b0748a69ab10a90ac19bc0029",
+  "sourceMap": "26:266:0:-;;;;;;;;;;;;;;;;;",
+  "deployedSourceMap": "26:266:0:-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;203:86;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;84:115;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;50:29;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;203:86;248:7;270:14;;263:21;;203:86;:::o;84:115::-;140:4;169:7;152:14;:24;;;;;;;190:4;183:11;;84:115;;;:::o;50:29::-;;;;:::o",
+  "source": "pragma solidity ^0.4.19;\n\ncontract Transcript {\n  bytes32 public requestors_key;\n\n  function sendTsRequest(bytes32 req_key) public returns (bool) {\n    requestors_key = req_key;\n\n    return true;\n  }\n\n  function getTsRequest() public view returns (bytes32) {\n    return requestors_key;\n  }\n\n}\n",
+  "sourcePath": "/home/mike/ether/tscp/contracts/Transcript.sol",
+  "ast": {
+    "attributes": {
+      "absolutePath": "/home/mike/ether/tscp/contracts/Transcript.sol",
+      "exportedSymbols": {
+        "Transcript": [
+          26
+        ]
+      }
+    },
+    "children": [
+      {
+        "attributes": {
+          "literals": [
+            "solidity",
+            "^",
+            "0.4",
+            ".19"
+          ]
+        },
+        "id": 1,
+        "name": "PragmaDirective",
+        "src": "0:24:0"
+      },
+      {
+        "attributes": {
+          "baseContracts": [
+            null
+          ],
+          "contractDependencies": [
+            null
+          ],
+          "contractKind": "contract",
+          "documentation": null,
+          "fullyImplemented": true,
+          "linearizedBaseContracts": [
+            26
+          ],
+          "name": "Transcript",
+          "scope": 27
+        },
+        "children": [
+          {
+            "attributes": {
+              "constant": false,
+              "name": "requestors_key",
+              "scope": 26,
+              "stateVariable": true,
+              "storageLocation": "default",
+              "type": "bytes32",
+              "value": null,
+              "visibility": "public"
+            },
+            "children": [
+              {
+                "attributes": {
+                  "name": "bytes32",
+                  "type": "bytes32"
+                },
+                "id": 2,
+                "name": "ElementaryTypeName",
+                "src": "50:7:0"
+              }
+            ],
+            "id": 3,
+            "name": "VariableDeclaration",
+            "src": "50:29:0"
+          },
+          {
+            "attributes": {
+              "constant": false,
+              "implemented": true,
+              "isConstructor": false,
+              "modifiers": [
+                null
+              ],
+              "name": "sendTsRequest",
+              "payable": false,
+              "scope": 26,
+              "stateMutability": "nonpayable",
+              "superFunction": null,
+              "visibility": "public"
+            },
+            "children": [
+              {
+                "children": [
+                  {
+                    "attributes": {
+                      "constant": false,
+                      "name": "req_key",
+                      "scope": 17,
+                      "stateVariable": false,
+                      "storageLocation": "default",
+                      "type": "bytes32",
+                      "value": null,
+                      "visibility": "internal"
+                    },
+                    "children": [
+                      {
+                        "attributes": {
+                          "name": "bytes32",
+                          "type": "bytes32"
+                        },
+                        "id": 4,
+                        "name": "ElementaryTypeName",
+                        "src": "107:7:0"
+                      }
+                    ],
+                    "id": 5,
+                    "name": "VariableDeclaration",
+                    "src": "107:15:0"
+                  }
+                ],
+                "id": 6,
+                "name": "ParameterList",
+                "src": "106:17:0"
+              },
+              {
+                "children": [
+                  {
+                    "attributes": {
+                      "constant": false,
+                      "name": "",
+                      "scope": 17,
+                      "stateVariable": false,
+                      "storageLocation": "default",
+                      "type": "bool",
+                      "value": null,
+                      "visibility": "internal"
+                    },
+                    "children": [
+                      {
+                        "attributes": {
+                          "name": "bool",
+                          "type": "bool"
+                        },
+                        "id": 7,
+                        "name": "ElementaryTypeName",
+                        "src": "140:4:0"
+                      }
+                    ],
+                    "id": 8,
+                    "name": "VariableDeclaration",
+                    "src": "140:4:0"
+                  }
+                ],
+                "id": 9,
+                "name": "ParameterList",
+                "src": "139:6:0"
+              },
+              {
+                "children": [
+                  {
+                    "children": [
+                      {
+                        "attributes": {
+                          "argumentTypes": null,
+                          "isConstant": false,
+                          "isLValue": false,
+                          "isPure": false,
+                          "lValueRequested": false,
+                          "operator": "=",
+                          "type": "bytes32"
+                        },
+                        "children": [
+                          {
+                            "attributes": {
+                              "argumentTypes": null,
+                              "overloadedDeclarations": [
+                                null
+                              ],
+                              "referencedDeclaration": 3,
+                              "type": "bytes32",
+                              "value": "requestors_key"
+                            },
+                            "id": 10,
+                            "name": "Identifier",
+                            "src": "152:14:0"
+                          },
+                          {
+                            "attributes": {
+                              "argumentTypes": null,
+                              "overloadedDeclarations": [
+                                null
+                              ],
+                              "referencedDeclaration": 5,
+                              "type": "bytes32",
+                              "value": "req_key"
+                            },
+                            "id": 11,
+                            "name": "Identifier",
+                            "src": "169:7:0"
+                          }
+                        ],
+                        "id": 12,
+                        "name": "Assignment",
+                        "src": "152:24:0"
+                      }
+                    ],
+                    "id": 13,
+                    "name": "ExpressionStatement",
+                    "src": "152:24:0"
+                  },
+                  {
+                    "attributes": {
+                      "functionReturnParameters": 9
+                    },
+                    "children": [
+                      {
+                        "attributes": {
+                          "argumentTypes": null,
+                          "hexvalue": "74727565",
+                          "isConstant": false,
+                          "isLValue": false,
+                          "isPure": true,
+                          "lValueRequested": false,
+                          "subdenomination": null,
+                          "token": "bool",
+                          "type": "bool",
+                          "value": "true"
+                        },
+                        "id": 14,
+                        "name": "Literal",
+                        "src": "190:4:0"
+                      }
+                    ],
+                    "id": 15,
+                    "name": "Return",
+                    "src": "183:11:0"
+                  }
+                ],
+                "id": 16,
+                "name": "Block",
+                "src": "146:53:0"
+              }
+            ],
+            "id": 17,
+            "name": "FunctionDefinition",
+            "src": "84:115:0"
+          },
+          {
+            "attributes": {
+              "constant": true,
+              "implemented": true,
+              "isConstructor": false,
+              "modifiers": [
+                null
+              ],
+              "name": "getTsRequest",
+              "payable": false,
+              "scope": 26,
+              "stateMutability": "view",
+              "superFunction": null,
+              "visibility": "public"
+            },
+            "children": [
+              {
+                "attributes": {
+                  "parameters": [
+                    null
+                  ]
+                },
+                "children": [],
+                "id": 18,
+                "name": "ParameterList",
+                "src": "224:2:0"
+              },
+              {
+                "children": [
+                  {
+                    "attributes": {
+                      "constant": false,
+                      "name": "",
+                      "scope": 25,
+                      "stateVariable": false,
+                      "storageLocation": "default",
+                      "type": "bytes32",
+                      "value": null,
+                      "visibility": "internal"
+                    },
+                    "children": [
+                      {
+                        "attributes": {
+                          "name": "bytes32",
+                          "type": "bytes32"
+                        },
+                        "id": 19,
+                        "name": "ElementaryTypeName",
+                        "src": "248:7:0"
+                      }
+                    ],
+                    "id": 20,
+                    "name": "VariableDeclaration",
+                    "src": "248:7:0"
+                  }
+                ],
+                "id": 21,
+                "name": "ParameterList",
+                "src": "247:9:0"
+              },
+              {
+                "children": [
+                  {
+                    "attributes": {
+                      "functionReturnParameters": 21
+                    },
+                    "children": [
+                      {
+                        "attributes": {
+                          "argumentTypes": null,
+                          "overloadedDeclarations": [
+                            null
+                          ],
+                          "referencedDeclaration": 3,
+                          "type": "bytes32",
+                          "value": "requestors_key"
+                        },
+                        "id": 22,
+                        "name": "Identifier",
+                        "src": "270:14:0"
+                      }
+                    ],
+                    "id": 23,
+                    "name": "Return",
+                    "src": "263:21:0"
+                  }
+                ],
+                "id": 24,
+                "name": "Block",
+                "src": "257:32:0"
+              }
+            ],
+            "id": 25,
+            "name": "FunctionDefinition",
+            "src": "203:86:0"
+          }
+        ],
+        "id": 26,
+        "name": "ContractDefinition",
+        "src": "26:266:0"
+      }
+    ],
+    "id": 27,
+    "name": "SourceUnit",
+    "src": "0:293:0"
+  },
+  "compiler": {
+    "name": "solc",
+    "version": "0.4.19+commit.c4cbbb05.Emscripten.clang"
+  },
+  "networks": {
+    "5777": {
+      "events": {},
+      "links": {},
+      "address": "0xf204a4ef082f5c04bb89f7d5e6568b796096735a"
+    }
+  },
+  "schemaVersion": "1.0.1",
+  "updatedAt": "2018-03-04T18:44:06.487Z"
+}

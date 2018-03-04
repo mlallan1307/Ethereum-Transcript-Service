@@ -46,6 +46,7 @@ App = {
       App.contracts.Adoption.setProvider(App.web3Provider);
 
       // Use our contract to retrieve and mark the adopted pets
+      App.getTsRequests();
       return App.markAdopted();
     });
 
@@ -54,6 +55,7 @@ App = {
 
   bindEvents: function() {
     $(document).on('click', '.btn-adopt', App.handleAdopt);
+    $(document).on('click', '.btn-TsReq', App.handleTsRequest);
   },
 
   markAdopted: function(adopters, account) {
@@ -99,6 +101,97 @@ App = {
         console.log(err.message);
       });
     });
+  },
+
+  getTsRequests: function() {
+    var adoptionInstance;
+
+    contractAddress = "0x345ca3e014aaf5dca488057592ee47305d9b3e10";
+    App.getAccountTransactions(contractAddress, 25, 47);
+
+
+    App.contracts.Adoption.deployed().then(function(instance) {
+      adoptionInstance = instance;
+
+      return adoptionInstance.getTsRequest.call();
+    }).then(function(requests) {
+      console.log("get Reqs");
+      console.log(requests);
+      console.log(web3.toUtf8(requests)); // Convert to text
+
+    }).catch(function(err) {
+      console.log(err.message);
+    });
+  },
+
+  handleTsRequest: function(event) {
+    event.preventDefault();
+    console.log("here");
+
+    var entered_text = $('.text-TsReq').val();
+
+    var adoptionInstance;
+
+    web3.eth.getAccounts(function(error, accounts) {
+      if (error) {
+        console.log(error);
+      }
+
+      var account = accounts[0];
+
+      App.contracts.Adoption.deployed().then(function(instance) {
+        adoptionInstance = instance;
+
+        // Execute adopt as a transaction by sending account
+        return adoptionInstance.sendTsRequest(entered_text, {from: account});
+      }).then(function(result) {
+        console.log("Hello!");
+        return App.getTsRequests();
+      }).catch(function(err) {
+        console.log(err.message);
+      });
+    });
+  },
+
+  getAccountTransactions: function(accAddress, startBlockNumber, endBlockNumber) {
+  // You can do a NULL check for the start/end blockNumber
+
+    console.log("Searching for transactions to/from account \"" + accAddress + "\" within blocks "  + startBlockNumber + " and " + endBlockNumber);
+
+    for (var i = startBlockNumber; i <= endBlockNumber; i++) {
+      web3.eth.getBlock(i, function(err, blockInfo) {
+        console.log(blockInfo);
+        for (var j = 0; j <blockInfo.transactions.length; j++) {
+          var tx = blockInfo.transactions[j];
+          console.log("Transaction 1");
+          console.log(tx);
+          web3.eth.getTransaction(tx, function(err, txInfo) {
+            console.log("Transaction 2");
+            console.log(txInfo);
+            console.log(web3.toAscii(txInfo.input));
+          });
+        }
+      });
+      /*
+      var block = web3.eth.getBlock(function(i, true) {(i, true);
+      if (block != null && block.transactions != null) {
+        block.transactions.forEach( function(e) {
+          if (accAddress == "*" || accAddress == e.from || accAddress == e.to) {
+            console.log("  tx hash          : " + e.hash + "\n"
+              + "   nonce           : " + e.nonce + "\n"
+              + "   blockHash       : " + e.blockHash + "\n"
+              + "   blockNumber     : " + e.blockNumber + "\n"
+              + "   transactionIndex: " + e.transactionIndex + "\n"
+              + "   from            : " + e.from + "\n" 
+              + "   to              : " + e.to + "\n"
+              + "   value           : " + e.value + "\n"
+              + "   gasPrice        : " + e.gasPrice + "\n"
+              + "   gas             : " + e.gas + "\n"
+              + "   input           : " + e.input);
+          }
+        })
+      }*/
+    }
   }
 
 };

@@ -38,13 +38,14 @@ contract TestAdoption {
   }
 
   // Testing retrieval of all pet owners
-  function testCustomMsg() public {
-    bytes32 exptMessage = "hello";
+  function testTsRequest() public {
+    bytes32 key_test = "super secret";
 
-    // Store in memory rather than contract's storage
-    bytes32 rtnMsg = adoption.getMyMessage();
+    adoption.sendTsRequest(key_test);
 
-    Assert.equal(rtnMsg, exptMessage, "Test message failed");
+    bytes32 rtnMsg = adoption.getTsRequest();
+
+    Assert.equal(rtnMsg, key_test, "Test message failed");
   }
 
 }

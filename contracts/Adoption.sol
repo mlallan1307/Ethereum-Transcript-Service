@@ -1,8 +1,8 @@
 pragma solidity ^0.4.19;
 
 contract Adoption {
+  bytes32 public requestors_key;
   address[16] public adopters;
-  bytes32 public myMessage = "hello";
 
   // Adopting a pet
   function adopt(uint petId) public returns (uint) {
@@ -18,7 +18,14 @@ contract Adoption {
     return adopters;
   }
 
-  function getMyMessage() public view returns (bytes32) {
-    return myMessage;
+  function sendTsRequest(bytes32 req_key) public returns (bool) {
+    requestors_key = req_key;
+
+    return true;
   }
+
+  function getTsRequest() public view returns (bytes32) {
+    return requestors_key;
+  }
+
 }
