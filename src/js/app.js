@@ -3,23 +3,6 @@ App = {
   contracts: {},
 
   init: function() {
-    // Load pets.
-    $.getJSON('../pets.json', function(data) {
-      var petsRow = $('#petsRow');
-      var petTemplate = $('#petTemplate');
-
-      for (i = 0; i < data.length; i ++) {
-        petTemplate.find('.panel-title').text(data[i].name);
-        petTemplate.find('img').attr('src', data[i].picture);
-        petTemplate.find('.pet-breed').text(data[i].breed);
-        petTemplate.find('.pet-age').text(data[i].age);
-        petTemplate.find('.pet-location').text(data[i].location);
-        petTemplate.find('.btn-adopt').attr('data-id', data[i].id);
-
-        petsRow.append(petTemplate.html());
-      }
-    });
-
     return App.initWeb3();
   },
 
@@ -37,87 +20,52 @@ App = {
   },
 
   initContract: function() {
-    $.getJSON('Adoption.json', function(data) {
+    $.getJSON('TranscriptReq.json', function(data) {
       // Get the necessary contract artifact file and instantiate it with truffle-contract
-      var AdoptionArtifact = data;
-      App.contracts.Adoption = TruffleContract(AdoptionArtifact);
+      var TranscriptReqArtifact = data;
+      App.contracts.TranscriptReq = TruffleContract(TranscriptReqArtifact);
 
       // Set the provider for our contract
-      App.contracts.Adoption.setProvider(App.web3Provider);
+      App.contracts.TranscriptReq.setProvider(App.web3Provider);
 
-      // Use our contract to retrieve and mark the adopted pets
-      App.getTsRequests();
-      return App.markAdopted();
+      return App.getTsRequests();
     });
 
     return App.bindEvents();
   },
 
   bindEvents: function() {
-    $(document).on('click', '.btn-adopt', App.handleAdopt);
     $(document).on('click', '.btn-TsReq', App.handleTsRequest);
   },
 
-  markAdopted: function(adopters, account) {
-    var adoptionInstance;
+  getTsRequests: function() {
+    var transcriptInstance;
+    var transcriptInstance2;
 
-    App.contracts.Adoption.deployed().then(function(instance) {
-      adoptionInstance = instance;
+    App.getAccountTransactions(11, 20);
 
-      return adoptionInstance.getAdopters.call();
-    }).then(function(adopters) {
-      for (i = 0; i < adopters.length; i++) {
-        if (adopters[i] !== '0x0000000000000000000000000000000000000000') {
-          $('.panel-pet').eq(i).find('button').text('Success').attr('disabled', true);
-        }
-      }
+
+    App.contracts.TranscriptReq.deployed().then(function(instance) {
+      transcriptInstance = instance;
+
+      return transcriptInstance.getReqKey.call();
+    }).then(function(reqKey) {
+      console.log("Request key:");
+      //console.log(reqKey);
+      //console.log(web3.toAscii(reqKey)); // Convert to text
+      console.log(web3.toUtf8(reqKey)); // Convert to text
+
     }).catch(function(err) {
       console.log(err.message);
     });
-  },
 
-  handleAdopt: function(event) {
-    event.preventDefault();
+    App.contracts.TranscriptReq.deployed().then(function(instance) {
+      transcriptInstance2 = instance;
 
-    var petId = parseInt($(event.target).data('id'));
-
-    var adoptionInstance;
-
-    web3.eth.getAccounts(function(error, accounts) {
-      if (error) {
-        console.log(error);
-      }
-
-      var account = accounts[0];
-
-      App.contracts.Adoption.deployed().then(function(instance) {
-        adoptionInstance = instance;
-
-        // Execute adopt as a transaction by sending account
-        return adoptionInstance.adopt(petId, {from: account});
-      }).then(function(result) {
-        return App.markAdopted();
-      }).catch(function(err) {
-        console.log(err.message);
-      });
-    });
-  },
-
-  getTsRequests: function() {
-    var adoptionInstance;
-
-    contractAddress = "0x345ca3e014aaf5dca488057592ee47305d9b3e10";
-    App.getAccountTransactions(contractAddress, 25, 47);
-
-
-    App.contracts.Adoption.deployed().then(function(instance) {
-      adoptionInstance = instance;
-
-      return adoptionInstance.getTsRequest.call();
-    }).then(function(requests) {
-      console.log("get Reqs");
-      console.log(requests);
-      console.log(web3.toUtf8(requests)); // Convert to text
+      return transcriptInstance2.getReqDest.call();
+    }).then(function(reqDest) {
+      console.log("Request Destination:");
+      console.log(reqDest);
 
     }).catch(function(err) {
       console.log(err.message);
@@ -130,7 +78,7 @@ App = {
 
     var entered_text = $('.text-TsReq').val();
 
-    var adoptionInstance;
+    var transcriptInstance;
 
     web3.eth.getAccounts(function(error, accounts) {
       if (error) {
@@ -138,14 +86,19 @@ App = {
       }
 
       var account = accounts[0];
+      var desti = '0xf17f52151EbEF6C7334FAD080c5704D77216b732';
+      //var university = '0xC5fdf4076b8F3A5357c5E395ab970B5B54098Fef';
 
-      App.contracts.Adoption.deployed().then(function(instance) {
-        adoptionInstance = instance;
+      App.contracts.TranscriptReq.deployed().then(function(instance) {
+
+        transcriptInstance = instance;
 
         // Execute adopt as a transaction by sending account
-        return adoptionInstance.sendTsRequest(entered_text, {from: account});
+        console.log(desti, entered_text);
+        return transcriptInstance.setRequest(desti, entered_text, {from: account});
       }).then(function(result) {
         console.log("Hello!");
+        console.log(result);
         return App.getTsRequests();
       }).catch(function(err) {
         console.log(err.message);
@@ -153,13 +106,14 @@ App = {
     });
   },
 
-  getAccountTransactions: function(accAddress, startBlockNumber, endBlockNumber) {
+  getAccountTransactions: function(startBlockNumber, endBlockNumber) {
   // You can do a NULL check for the start/end blockNumber
-
-    console.log("Searching for transactions to/from account \"" + accAddress + "\" within blocks "  + startBlockNumber + " and " + endBlockNumber);
 
     for (var i = startBlockNumber; i <= endBlockNumber; i++) {
       web3.eth.getBlock(i, function(err, blockInfo) {
+        if (!blockInfo) {
+          return;
+        }
         console.log(blockInfo);
         for (var j = 0; j <blockInfo.transactions.length; j++) {
           var tx = blockInfo.transactions[j];
