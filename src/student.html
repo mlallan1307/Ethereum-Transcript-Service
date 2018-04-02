@@ -1,0 +1,31 @@
+<!doctype html>
+<html>
+  <head>
+    <title>Student Transcript Request</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+    <script src="js/web3.min.js"></script>
+    <script src="js/truffle-contract.js"></script>
+    <script src="js/app.js"></script>
+  </head>
+  <body>
+    <h2>Student Transcript Request</h2>
+    <label for="empPubkey">Employer's Public Key:</label><br/>
+    <textarea id="empPubkey" name="empPubkey" rows="7" cols="65"
+>-----BEGIN PUBLIC KEY-----
+MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQDyqQZNjM9fjBbuU2n9PvlPxT1V
+kT1VY68HKO8DrI1YMMbDI2qhl/PWrDt3dHnD6KBOXWvm/qTa7S3ZD7z+yV/0BOe1
+wsNzkXdnXUezfwlw/qJOwrjdN3WYIiCzHG2ioaCBxXP+7Ky9rvT8ikr7cq6HlRVy
+8r/60mzofu6ruE78BwIDAQAB
+-----END PUBLIC KEY-----</textarea><br/>
+    <label for="empAddr">Employer's Address:</label><br/>
+    <textarea id="empAddr" name="empAddr" type="text" rows=2 cols=65
+>0xf17f52151EbEF6C7334FAD080c5704D77216b732</textarea><br/>
+    <label for="schAddr">School's Address:</label><br/>
+    <textarea id="schAddr" name="schAddr" type="text" rows=2 cols=65
+>0xC5fdf4076b8F3A5357c5E395ab970B5B54098Fef</textarea><br/>
+    <button id="sendReq" name="sendReq" class="sendReq" type="button">Request Transcript</button>
+
+
+    
+  </body>
+</html>

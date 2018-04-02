@@ -35,37 +35,52 @@ App = {
   },
 
   bindEvents: function() {
-    $(document).on('click', '.btn-TsReq', App.handleTsRequest);
+    $(document).on('click', '#sendReq', App.handleTsRequest);
   },
 
   getTsRequests: function() {
-    var transcriptInstance;
-    var transcriptInstance2;
+    var txReqInstance;
 
-    App.getAccountTransactions(11, 20);
+    App.getAccountTransactions(4, 5);
 
-
+    return;
     App.contracts.TranscriptReq.deployed().then(function(instance) {
-      transcriptInstance = instance;
+      txReqInstance = instance;
 
-      return transcriptInstance.getReqKey.call();
-    }).then(function(reqKey) {
-      console.log("Request key:");
+      return txReqInstance.getSchoolAddr.call();
+    }).then(function(result) {
+      console.log("DBG: getSchoolAddr:");
       //console.log(reqKey);
       //console.log(web3.toAscii(reqKey)); // Convert to text
-      console.log(web3.toUtf8(reqKey)); // Convert to text
+      console.log(result); // Convert to text
 
     }).catch(function(err) {
       console.log(err.message);
     });
 
-    App.contracts.TranscriptReq.deployed().then(function(instance) {
-      transcriptInstance2 = instance;
 
-      return transcriptInstance2.getReqDest.call();
-    }).then(function(reqDest) {
-      console.log("Request Destination:");
-      console.log(reqDest);
+    var txReqInstance2;
+    App.contracts.TranscriptReq.deployed().then(function(instance) {
+      txReqInstance2 = instance;
+
+      return txReqInstance2.getDestinationAddr.call();
+    }).then(function(result) {
+      console.log("DBG: getDestinationAddr:");
+      console.log(result);
+
+    }).catch(function(err) {
+      console.log(err.message);
+    });
+
+
+    var txReqInstance3;
+    App.contracts.TranscriptReq.deployed().then(function(instance) {
+      txReqInstance3 = instance;
+
+      return txReqInstance3.getDestinationKey.call();
+    }).then(function(result) {
+      console.log("DBG: getDestinationKey:");
+      console.log(web3.toUtf8(result));
 
     }).catch(function(err) {
       console.log(err.message);
@@ -74,78 +89,100 @@ App = {
 
   handleTsRequest: function(event) {
     event.preventDefault();
-    console.log("here");
+    console.log("DBG: Handling Request");
 
-    var entered_text = $('.text-TsReq').val();
+    var val_schAddr = $('#schAddr').val();
+    var val_empAddr = $('#empAddr').val();
+    var val_empPubKey = $('#empPubkey').val();
 
-    var transcriptInstance;
+    console.log('DBG: val_schAddr');
+    console.log(val_schAddr);
+    console.log('DBG: val_empAddr:');
+    console.log(val_empAddr);
+    console.log('DBG: val_empPubKey:');
+    console.log(val_empPubKey);
 
-    web3.eth.getAccounts(function(error, accounts) {
-      if (error) {
-        console.log(error);
+    var txReqInstance;
+    
+    web3.eth.getAccounts(function(err, accounts) {
+      if (err) {
+        console.log(err);
       }
 
       var account = accounts[0];
-      var desti = '0xf17f52151EbEF6C7334FAD080c5704D77216b732';
-      //var university = '0xC5fdf4076b8F3A5357c5E395ab970B5B54098Fef';
 
-      App.contracts.TranscriptReq.deployed().then(function(instance) {
-
-        transcriptInstance = instance;
-
-        // Execute adopt as a transaction by sending account
-        console.log(desti, entered_text);
-        return transcriptInstance.setRequest(desti, entered_text, {from: account});
-      }).then(function(result) {
-        console.log("Hello!");
-        console.log(result);
-        return App.getTsRequests();
+      // Creating contract
+      App.contracts.TranscriptReq.new(val_schAddr, val_empAddr, val_empPubKey).then(function(instance) {
+        console.log("Creation success");
+        console.log(instance);
+        instance.schoolAddr().then(function(result) {
+          console.log("Result");
+          console.log(result);
+        });
+        console.log("Creation success");
       }).catch(function(err) {
-        console.log(err.message);
+        console.log("Creation error");
+        console.log(err);
+        console.log("Creation error");
       });
+      
     });
   },
 
   getAccountTransactions: function(startBlockNumber, endBlockNumber) {
   // You can do a NULL check for the start/end blockNumber
 
-    for (var i = startBlockNumber; i <= endBlockNumber; i++) {
-      web3.eth.getBlock(i, function(err, blockInfo) {
-        if (!blockInfo) {
-          return;
-        }
-        console.log(blockInfo);
-        for (var j = 0; j <blockInfo.transactions.length; j++) {
-          var tx = blockInfo.transactions[j];
-          console.log("Transaction 1");
-          console.log(tx);
-          web3.eth.getTransaction(tx, function(err, txInfo) {
-            console.log("Transaction 2");
-            console.log(txInfo);
-            console.log(web3.toAscii(txInfo.input));
-          });
-        }
-      });
-      /*
-      var block = web3.eth.getBlock(function(i, true) {(i, true);
-      if (block != null && block.transactions != null) {
-        block.transactions.forEach( function(e) {
-          if (accAddress == "*" || accAddress == e.from || accAddress == e.to) {
-            console.log("  tx hash          : " + e.hash + "\n"
-              + "   nonce           : " + e.nonce + "\n"
-              + "   blockHash       : " + e.blockHash + "\n"
-              + "   blockNumber     : " + e.blockNumber + "\n"
-              + "   transactionIndex: " + e.transactionIndex + "\n"
-              + "   from            : " + e.from + "\n" 
-              + "   to              : " + e.to + "\n"
-              + "   value           : " + e.value + "\n"
-              + "   gasPrice        : " + e.gasPrice + "\n"
-              + "   gas             : " + e.gas + "\n"
-              + "   input           : " + e.input);
+    web3.eth.getBlock('latest', function(err, latestBlock) {
+      if (!latestBlock) {
+        return;
+      }
+
+      for (var i = 0; i <= latestBlock.number; i++) {
+        web3.eth.getBlock(i, true, function(err, blockInfo) {
+          if (!blockInfo) {
+            return;
           }
-        })
-      }*/
-    }
+          //console.log(blockInfo);
+          for (var j = 0; j <blockInfo.transactions.length; j++) {
+            var txInfo = blockInfo.transactions[j];
+            console.log(txInfo);
+            if (txInfo.to === "0x0") {
+              web3.eth.getTransactionReceipt(txInfo.hash, function(err, txRe) {
+                console.log("Transaction");
+                console.log(txRe);
+                var contractAddress = txRe.contractAddress;
+                App.contracts.TranscriptReq.at(contractAddress).then(function(instance) {
+                  console.log("got instance");
+                  console.log(instance);
+                }).catch(function(err) {
+                  console.log("get instance error");
+                  console.log(err);
+                });
+              });
+            }
+          }
+        });
+        /*
+        var block = web3.eth.getBlock(function(i, true) {(i, true);
+        if (block != null && block.transactions != null) {
+          block.transactions.forEach( function(e) {
+            if (accAddress == "*" || accAddress == e.from || accAddress == e.to) {
+              console.log("  tx hash          : " + e.hash + "\n"
+                + "   nonce           : " + e.nonce + "\n"
+                + "   blockHash       : " + e.blockHash + "\n"
+                + "   blockNumber     : " + e.blockNumber + "\n"
+                + "   transactionIndex: " + e.transactionIndex + "\n"
+                + "   from            : " + e.from + "\n" 
+                + "   to              : " + e.to + "\n"
+                + "   value           : " + e.value + "\n"
+                + "   gasPrice        : " + e.gasPrice + "\n"
+                + "   gas             : " + e.gas + "\n"
+                + "   input           : " + e.input);
+            }
+          })
+        }*/
+      }
+    });
   }
 
 };

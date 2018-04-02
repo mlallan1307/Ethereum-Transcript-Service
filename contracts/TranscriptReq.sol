@@ -1,23 +1,35 @@
 pragma solidity ^0.4.19;
 
 contract TranscriptReq {
-  bytes public requestors_key;
-  address public destination_addr;
+  address public studentAddr;
+  address public schoolAddr;
+  address public destinationAddr;
+  bytes public   destinationKey;
+  bytes public   transcript;
+  bool public    isComplete;
 
-  function setRequest(address dest_addr, bytes req_key) public returns (bool) {
-    requestors_key = req_key;
-    destination_addr = dest_addr;
+  // Contructor
+  function TranscriptReq(address sch_addr, address dest_addr, bytes dest_key) public {
+    require(sch_addr != address(0));
+    require(dest_addr != address(0));
+    require(dest_key.length > 0);
 
+    studentAddr = msg.sender;
+    schoolAddr = sch_addr;
+    destinationAddr = dest_addr;
+    destinationKey = dest_key;
+    transcript = "";
+    isComplete = false;
+  }
+
+  // Only the school is able to set the transcript data
+  // returns true if transcript data was set, false otherwise
+  function setTranscript(bytes transcript_data) public returns (bool) {
+    require(msg.sender == schoolAddr);
+
+    transcript = transcript_data;
+    isComplete = true;
     return true;
   }
-
-  function getReqKey() public view returns (bytes) {
-    return requestors_key;
-  }
-
-  function getReqDest() public view returns (address) {
-    return destination_addr;
-  }
-
 
 }
