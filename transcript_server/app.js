@@ -1,11 +1,16 @@
 const mongoose = require('mongoose');
+const Promise = require("bluebird");
 const express = require('express');
 const app = express();
 
+const crypto = require('crypto');
 const Web3 = require('web3');
 const fs = require("fs");
 const TruffleContract = require("truffle-contract");
+const aesjs = require('aes-js');
 
+var CRYPTO_KEY_BITS  = 256;
+var CRYPTO_KEY_BYTES = CRYPTO_KEY_BITS/8;
 const crypt = require("node-jsencrypt");
 
 const MY_SCHOOL_ADDRESS = "0xc5fdf4076b8f3a5357c5e395ab970b5b54098fef";
@@ -48,7 +53,6 @@ etherApp = {
   },
 
   initContract: function() {
-    log("e: initContract");
     var data = JSON.parse(fs.readFileSync('../build/contracts/TranscriptReq.json', 'utf8'));
 
     // Get the necessary contract artifact file and instantiate it with truffle-contract
@@ -57,7 +61,7 @@ etherApp = {
 
     // Set the provider for our contract
     etherApp.contracts.TranscriptReq.setProvider(etherApp.web3Provider);
-    log("init complete");
+    log("init contract complete");
   },
 
 
@@ -126,7 +130,8 @@ etherApp = {
             if (txInfo.to === "0x0") {
               web3.eth.getTransactionReceipt(txInfo.hash, function(err, txRe) {
                 var contractAddress = txRe.contractAddress;
-                etherApp.contracts.TranscriptReq.at(contractAddress).then(function(instance) {
+                etherApp.contracts.TranscriptReq.at(contractAddress).then(
+                  function(instance) {
                   //console.log("got contract instance");
                   instance.isComplete().then(function(instComplete) {
                     if (instComplete === false) {
@@ -135,16 +140,19 @@ etherApp = {
                       instance.transcript().then(function(transcriptData) {
                         log("-----------------------------");
                         log("Completed request Data:");
-                        var data = web3.toUtf8(transcriptData);
+                        var encryptedData = web3.toUtf8(transcriptData);
                         log("Encrypted: ");
-                        log(data);
-                        var tmpCrypt = new crypt();
-                        tmpCrypt.setPrivateKey(priv_key);
-                        var decrypted = tmpCrypt.decrypt(data);
-                        log("Decrypted: ");
-                        log(decrypted);
-                        log("-----------------------------");
-
+                        log(encryptedData);
+                        transcript_decrypt(encryptedData, priv_key,
+                          function(err, decryptedData) {
+                          if (err) {
+                            log("Decrypt error");
+                            log(err);
+                          }
+                          log("Decrypted: ");
+                          log(JSON.parse(decryptedData));
+                          log("-----------------------------");
+                        });
                         //return callback(null, instance);
                       }).catch(function(err) {
                         console.log(err);
@@ -167,6 +175,132 @@ etherApp = {
 
 };
 
+
+
+function random_uint(){
+  var maxBytes = Math.log2(Number.MAX_SAFE_INTEGER); // Get max number of bits
+  maxBytes = (maxBytes/8); // Convert to bytes but may be float number
+  maxBytes = Math.floor(maxBytes); // Round down to nearest byte
+  var buf = crypto.randomBytes(maxBytes);
+  var uint = buf.readUIntBE(0, buf.length);
+  return uint;
+
+}
+
+function encrypt(value, callback) {
+  // AES Encryption using counter mode
+
+  var cKey = crypto.randomBytes(CRYPTO_KEY_BYTES); // Gen AES key
+  var cCounter = random_uint(); // Gen AES counter
+
+  // 1. Convert text to bytes 
+  var textBytes = aesjs.utils.utf8.toBytes(value);
+
+  // 2. The counter mode of operation maintains internal state, so to 
+  //    encrypt, a new instance must be instantiated. 
+  var aesCtr = new aesjs.ModeOfOperation.ctr(cKey, new aesjs.Counter(cCounter));
+  var encryptedBytes = aesCtr.encrypt(textBytes);
+   
+  // 3. Convert data from bytes to hex to reduce size as string
+  var encryptedHex = aesjs.utils.hex.fromBytes(encryptedBytes);
+
+  return callback(null, encryptedHex, cKey, cCounter);
+}
+
+function decrypt(value, cKey, cCounter, callback) {
+  // 1. To decrypt the hex string, convert it back to bytes 
+  var encryptedBytes = aesjs.utils.hex.toBytes(value);
+   
+  // 2. The counter mode of operation maintains internal state, so to 
+  //    decrypt, a new instance must be instantiated. 
+  var aesCtr = new aesjs.ModeOfOperation.ctr(cKey, new aesjs.Counter(cCounter));
+  var decryptedBytes = aesCtr.decrypt(encryptedBytes);
+   
+  // 3. Convert our bytes back into text 
+  var decryptedText = aesjs.utils.utf8.fromBytes(decryptedBytes);
+
+  return callback(null, decryptedText);
+}
+
+function transcript_encrypt(transcript, pubKey, callback) {
+  // Encrypt transcript data using AES, and AES key using public key
+
+  // 1. Perform AES encryption on data
+  encrypt(transcript, function(err, encryptedTs, cKey, cCounter) {
+    if (err != null) {
+      callback("encrypt failure");
+    }
+
+    // 2. Create data structure to hold AES key and counter
+    var sym_key_data = [aesjs.utils.hex.fromBytes(cKey), cCounter];
+    var sym_key_data_str = JSON.stringify(sym_key_data);
+
+    // 3. Encrypt AES key and counter using provided public key
+    var tmpCrypt = new crypt();
+    tmpCrypt.setPublicKey(pubKey);
+    var encryptedKey = tmpCrypt.encrypt(sym_key_data_str);
+
+    // 4. Store combined encrypted data and encrypted keys in data structure
+    var result = [encryptedTs, encryptedKey];
+    return callback(null, JSON.stringify(result));
+  });
+}
+
+function transcript_decrypt(data, privKey, callback) {
+  // Decrypt the data that was encrypted using the transcript_encrypt method
+
+  // 1. Parse to stringified data structure that contains the encrypted data
+  //    and encrypted key
+  var dataParsed = JSON.parse(data);
+  if (dataParsed.length != 2) {
+    log("parse error: " + dataParsed);
+    return callback("Error");
+  }
+  var encryptedData = dataParsed[0];
+  var encryptedKey =  dataParsed[1];
+
+  // 2. Using the provided private key, decrypt the encrypted AES key data
+  var tmpCrypt = new crypt();
+  tmpCrypt.setPrivateKey(privKey);
+  var decryptedKey = tmpCrypt.decrypt(encryptedKey);
+  var decryptedKeyParsed = JSON.parse(decryptedKey);
+  if (decryptedKeyParsed.length != 2) {
+    log("parse error: " + dataParsed);
+    return callback("Error");
+  }
+
+  // 3. Return the decrypted AES key to bytes from hex
+  var cKey = aesjs.utils.hex.toBytes(decryptedKeyParsed[0]);
+  var cCounter = decryptedKeyParsed[1];
+
+  // 4. Decrypt the data using the now decrypted AES key and counter
+  decrypt(encryptedData, cKey, cCounter, function(err, decryptedData) {
+    if (err != null) {
+      callback("decrypt failure");
+    }
+    return callback(null, decryptedData);
+  });
+}
+
+/*
+var PUB_KEY = `-----BEGIN PUBLIC KEY-----
+MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQDyqQZNjM9fjBbuU2n9PvlPxT1V
+kT1VY68HKO8DrI1YMMbDI2qhl/PWrDt3dHnD6KBOXWvm/qTa7S3ZD7z+yV/0BOe1
+wsNzkXdnXUezfwlw/qJOwrjdN3WYIiCzHG2ioaCBxXP+7Ky9rvT8ikr7cq6HlRVy
+8r/60mzofu6ruE78BwIDAQAB
+-----END PUBLIC KEY-----`;
+
+
+transcript_encrypt("blah blah data", PUB_KEY, function(err, data) {
+  log(err);
+  log(data);
+  transcript_decrypt(data, priv_key, function(err, origData) {
+    log(err);
+    log(origData);
+  });
+});
+*/
+
 function handle_requests() {
 
   //var interval = setInterval(() => etherApp.getTsRequest(function(reqData) {
@@ -187,7 +321,8 @@ function handle_requests() {
           console.log(studentAddress);
           if (!studentAddress) {return}
           // if requestor is in the student database, get transcript data
-          db_student.findOne({ address: studentAddress }, function (err, studentRecord) {
+          db_student.findOne({ address: studentAddress },
+            function (err, studentRecord) {
             if (err) {
               console.log("db err: " + err);
               console.log(err);
@@ -198,23 +333,25 @@ function handle_requests() {
               reqInstance.destinationKey().then(function(destinationKey) {
                 if (!destinationKey) {return}
                 var pubKey = web3.toUtf8(destinationKey);
-                log(pubKey);
-                var tmpCrypt = new crypt();
-                tmpCrypt.setPublicKey(pubKey);
-                var encryptedTs = tmpCrypt.encrypt(studentRecord.transcript);
-                log(encryptedTs);
-                // create response contract
-                reqInstance.setTranscript(
-                    studentRecord.transcript,
-                    { from: MY_SCHOOL_ADDRESS,
-                      gas: 5000000,
-                      gasPrice: 1000000000 }).then(function(result) {
-                  console.log("Success!");
-                  console.log(result);
-                  
-                }).catch(function(err) {
-                  console.log("TX response err:");
-                  console.log(err);
+                transcript_encrypt(studentRecord.transcript, pubKey,
+                  function(err, encryptedTs) {
+                  if (err) {
+                    log("transcript_encrypt error");
+                    log(err);
+                    return;
+                  }
+                  // create response contract
+                  reqInstance.setTranscript(
+                      encryptedTs,
+                      { from: MY_SCHOOL_ADDRESS,
+                        gas: 5000000,
+                        gasPrice: 1000000000 }).then(function(result) {
+                    console.log("Success!");
+                    console.log(result);
+                  }).catch(function(err) {
+                    console.log("TX response err:");
+                    console.log(err);
+                  });
                 });
               }).catch(function(err) {
                 console.log(err);
@@ -252,8 +389,7 @@ function log(msg) {
 }
 
 var uri = 'mongodb://localhost:27017/transcripts';
-// Use bluebird
-var db_options = { promiseLibrary: require('bluebird') };
+var db_options = { promiseLibrary: Promise };
 var db = mongoose.createConnection(uri, db_options);
 
 db_student = db.model('students',
