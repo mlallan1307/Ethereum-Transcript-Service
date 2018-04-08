@@ -1,63 +1,31 @@
-<!DOCTYPE html>
-<html lang="en">
+<!doctype html>
+<html>
   <head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
-    <title>Pete's Pet Shop</title>
-
-    <!-- Bootstrap -->
-    <link href="css/bootstrap.min.css" rel="stylesheet">
-
-    <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
-    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
-    <!--[if lt IE 9]>
-      <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
-      <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
-    <![endif]-->
-  </head>
-  <body>
-    <div class="container">
-      <div class="row">
-        <div class="col-xs-12 col-sm-8 col-sm-push-2">
-          <h1 class="text-center">Student Transcript Portal</h1>
-          <hr/>
-          <br/>
-        </div>
-      </div>
-
-      <div>
-        <textarea class="text-TsReq"></textarea>
-        <button class="btn btn-default btn-TsReq" type="button">TS Req</button>
-      </div>
-
-    </div>
-
-    <div id="petTemplate" style="display: none;">
-      <div class="col-sm-6 col-md-4 col-lg-3">
-        <div class="panel panel-default panel-pet">
-          <div class="panel-heading">
-            <h3 class="panel-title">Scrappy</h3>
-          </div>
-          <div class="panel-body">
-            <img alt="140x140" data-src="holder.js/140x140" class="img-rounded img-center" style="width: 100%;" src="https://animalso.com/wp-content/uploads/2017/01/Golden-Retriever_6.jpg" data-holder-rendered="true">
-            <br/><br/>
-            <strong>Breed</strong>: <span class="pet-breed">Golden Retriever</span><br/>
-            <strong>Age</strong>: <span class="pet-age">3</span><br/>
-            <strong>Location</strong>: <span class="pet-location">Warren, MI</span><br/><br/>
-            <button class="btn btn-default btn-adopt" type="button" data-id="0">Adopt</button>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+    <title>Student Transcript Request</title>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
-    <!-- Include all compiled plugins (below), or include individual files as needed -->
-    <script src="js/bootstrap.min.js"></script>
     <script src="js/web3.min.js"></script>
     <script src="js/truffle-contract.js"></script>
     <script src="js/app.js"></script>
+  </head>
+  <body>
+    <h2>Student Transcript Request</h2>
+    <label for="empPubkey">Employer's Public Key:</label><br/>
+    <textarea id="empPubkey" name="empPubkey" rows="7" cols="65"
+>-----BEGIN PUBLIC KEY-----
+MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQDyqQZNjM9fjBbuU2n9PvlPxT1V
+kT1VY68HKO8DrI1YMMbDI2qhl/PWrDt3dHnD6KBOXWvm/qTa7S3ZD7z+yV/0BOe1
+wsNzkXdnXUezfwlw/qJOwrjdN3WYIiCzHG2ioaCBxXP+7Ky9rvT8ikr7cq6HlRVy
+8r/60mzofu6ruE78BwIDAQAB
+-----END PUBLIC KEY-----</textarea><br/>
+    <label for="empAddr">Employer's Address:</label><br/>
+    <textarea id="empAddr" name="empAddr" type="text" rows=2 cols=65
+>0xf17f52151EbEF6C7334FAD080c5704D77216b732</textarea><br/>
+    <label for="schAddr">School's Address:</label><br/>
+    <textarea id="schAddr" name="schAddr" type="text" rows=2 cols=65
+>0xC5fdf4076b8F3A5357c5E395ab970B5B54098Fef</textarea><br/>
+    <button id="sendReq" name="sendReq" class="sendReq" type="button">Request Transcript</button>
+
+
+    
   </body>
 </html>
