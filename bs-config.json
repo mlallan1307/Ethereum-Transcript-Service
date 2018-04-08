@@ -1,5 +1,0 @@
-{
-  "server": {
-    "baseDir": ["./student_server", "./ether_contracts/build/contracts"]
-  }
-}
