@@ -1,0 +1,8 @@
+hr {
+  border-width: 5px 0;
+  border-color: black;
+}
+
+.container {
+  margin-top: 20px;
+}

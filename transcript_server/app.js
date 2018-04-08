@@ -416,6 +416,9 @@ function init_db() {
     name: "Jack Allan",
     address: "0x627306090abab3a6e1400e9345bc60c78a8bef57",
     transcript: JSON.stringify({
+      'Name': "Jack Allan",
+      'Cumulative GPA': '4.000',
+      'Completed Credits': '32.000',
       'courses': [
         {
           'Term':       'FA 2014',
@@ -458,9 +461,7 @@ function init_db() {
           'GPA Hours':  '4.000',
           'GPA Earned': '4.000'
         }
-      ],
-      'Cumulative GPA': '4.000',
-      'Completed Credits': '32.000'
+      ]
     })
   });
 

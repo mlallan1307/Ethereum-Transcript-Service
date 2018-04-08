@@ -1,0 +1,34 @@
+<div class="container">
+  <div class="col">
+    <div *ngFor="let ts of tsData">
+      <div class="card">
+        <div class="text-center card-header">
+          Name: {{ts.Name}}
+        </div>
+        <div class="card-body">
+          <p>Cumulative GPA {{ts['Cumulative GPA']}}</p>
+          <p>Completed credits {{ts['Completed Credits']}}</p>
+          <table class="table table-sm">
+            <thead>
+              <tr>
+                <th scope="col">Term</th>
+                <th scope="col">Course</th>
+                <th scope="col">GPA Hours</th>
+                <th scope="col">GPA Earned</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let course of ts.courses">
+                <td>{{course['Term']}}</td>
+                <td>{{course['Course']}}</td>
+                <td>{{course['GPA Hours']}}</td>
+                <td>{{course['GPA Earned']}}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div> <!-- card-body -->
+      </div> <!-- card -->
+      <hr>
+    </div> <!-- ngFor -->
+  </div>
+</div>
