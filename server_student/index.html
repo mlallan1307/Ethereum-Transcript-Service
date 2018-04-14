@@ -2,30 +2,74 @@
 <html>
   <head>
     <title>Student Transcript Request</title>
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
-    <script src="js/web3.min.js"></script>
-    <script src="js/truffle-contract.js"></script>
-    <script src="js/app.js"></script>
+    <link
+      rel="stylesheet"
+      href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
+      integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm"
+      crossorigin="anonymous">
   </head>
   <body>
-    <h2>Student Transcript Request</h2>
-    <label for="empPubkey">Employer's Public Key:</label><br/>
-    <textarea id="empPubkey" name="empPubkey" rows="7" cols="65"
->-----BEGIN PUBLIC KEY-----
+    <div class="container" style="margin-top: 20px;">
+      <h2>Student Transcript Request</h2>
+      <form>
+        <div class="form-group">
+          <label for="empPubkey">Employer's Public Key:</label><br/>
+          <textarea
+            id="empPubkey"
+            name="empPubkey"
+            class="form-control"
+            rows="7"
+            cols="70"
+            >-----BEGIN PUBLIC KEY-----
 MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQDyqQZNjM9fjBbuU2n9PvlPxT1V
 kT1VY68HKO8DrI1YMMbDI2qhl/PWrDt3dHnD6KBOXWvm/qTa7S3ZD7z+yV/0BOe1
 wsNzkXdnXUezfwlw/qJOwrjdN3WYIiCzHG2ioaCBxXP+7Ky9rvT8ikr7cq6HlRVy
 8r/60mzofu6ruE78BwIDAQAB
 -----END PUBLIC KEY-----</textarea><br/>
-    <label for="empAddr">Employer's Address:</label><br/>
-    <textarea id="empAddr" name="empAddr" type="text" rows=2 cols=65
->0xf17f52151EbEF6C7334FAD080c5704D77216b732</textarea><br/>
-    <label for="schAddr">School's Address:</label><br/>
-    <textarea id="schAddr" name="schAddr" type="text" rows=2 cols=65
->0xC5fdf4076b8F3A5357c5E395ab970B5B54098Fef</textarea><br/>
-    <button id="sendReq" name="sendReq" class="sendReq" type="button">Request Transcript</button>
-
-
-    
+        </div>
+        <div class="form-group">
+          <label for="empAddr">Employer's Address:</label><br/>
+          <textarea
+            id="empAddr"
+            name="empAddr"
+            class="form-control"
+            type="text"
+            rows=2
+            cols=70
+            >0xf17f52151EbEF6C7334FAD080c5704D77216b732</textarea><br/>
+        </div>
+        <div class="form-group">
+          <label for="schAddr">School's Address:</label><br/>
+          <textarea
+            id="schAddr"
+            name="schAddr"
+            class="form-control"
+            type="text"
+            rows=2
+            cols=70
+            >0xC5fdf4076b8F3A5357c5E395ab970B5B54098Fef</textarea><br/>
+        </div>
+      <button
+        id="sendReq"
+        name="sendReq"
+        class="sendReq btn btn-primary"
+        type="button">Request Transcript</button>
+      </form>
+    </div>
+    <script
+      src="https://code.jquery.com/jquery-3.3.1.min.js"
+      integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
+      crossorigin="anonymous"></script>
+    <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"
+      integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
+      crossorigin="anonymous"></script>
+    <script
+      src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"
+      integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
+      crossorigin="anonymous"></script>
+    <script src="js/web3.min.js"></script>
+    <script src="js/truffle-contract.js"></script>
+    <script src="js/app.js"></script>
   </body>
 </html>
