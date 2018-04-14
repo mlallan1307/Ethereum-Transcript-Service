@@ -62,6 +62,11 @@ App = {
     console.log('DBG: val_empPubKey:');
     console.log(val_empPubKey);
 
+    if (val_empPubKey.length < 799) {
+      console.log("Public key is too short! " + val_empPubKey.length);
+      return;
+    }
+
     var txReqInstance;
     
     // Creating contract

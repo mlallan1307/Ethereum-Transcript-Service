@@ -136,6 +136,9 @@ function encrypt(value, callback) {
    
   // 3. Convert data from bytes to hex to reduce size as string
   var encryptedHex = aesjs.utils.hex.fromBytes(encryptedBytes);
+  if (!encryptedHex || !cKey || !cCounter) {
+    return callback("AES Error");
+  }
 
   return callback(null, encryptedHex, cKey, cCounter);
 }
@@ -143,10 +146,14 @@ function encrypt(value, callback) {
 function transcript_encrypt(transcript, pubKey, callback) {
   // Encrypt transcript data using AES, and AES key using public key
 
+  if (pubKey.length < config.MIN_PUBLIC_KEY_BYTES) {
+    return callback("RSA key is too short! Keys must be over 4096 bits, " + pubKey.length);
+  }
+
   // 1. Perform AES encryption on data
   encrypt(transcript, function(err, encryptedTs, cKey, cCounter) {
     if (err != null) {
-      callback("encrypt failure");
+      return callback("AES encrypt failure");
     }
 
     // 2. Create data structure to hold AES key and counter
@@ -157,6 +164,9 @@ function transcript_encrypt(transcript, pubKey, callback) {
     var tmpCrypt = new jsencrypt();
     tmpCrypt.setPublicKey(pubKey);
     var encryptedKey = tmpCrypt.encrypt(sym_key_data_str);
+    if (!encryptedKey) {
+      return callback("RSA encrypt failure");
+    }
 
     // 4. Store combined encrypted data and encrypted keys in data structure
     var result = [encryptedTs, encryptedKey];
