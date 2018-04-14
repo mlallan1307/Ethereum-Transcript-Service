@@ -34,7 +34,6 @@ App = {
         }
 
         var account = accounts[0];
-
         App.contracts.TranscriptReq.defaults({from: account});
         return;
       });
@@ -65,32 +64,24 @@ App = {
 
     var txReqInstance;
     
-    web3.eth.getAccounts(function(err, accounts) {
-      if (err) {
-        console.log(err);
-      }
+    // Creating contract
+    var newContractPromise = App.contracts.TranscriptReq.new(
+        val_schAddr,
+        val_empAddr,
+        val_empPubKey);
 
-      var account = accounts[0];
-
-      // Creating contract
-      var newContractPromise = App.contracts.TranscriptReq.new(
-          val_schAddr,
-          val_empAddr,
-          val_empPubKey);
-
-      newContractPromise.then(function(instance) {
-        console.log("Creation success");
-        console.log(instance);
-        instance.schoolAddr().then(function(result) {
-          console.log("Result");
-          console.log(result);
-        });
-        console.log("Creation success");
-      }).catch(function(err) {
-        console.log("Creation error");
-        console.log(err);
-        console.log("Creation error");
+    newContractPromise.then(function(instance) {
+      console.log("Creation success");
+      console.log(instance);
+      instance.schoolAddr().then(function(result) {
+        console.log("Result");
+        console.log(result);
       });
+      console.log("Creation success");
+    }).catch(function(err) {
+      console.log("Creation error");
+      console.log(err);
+      console.log("Creation error");
     });
   }
 
