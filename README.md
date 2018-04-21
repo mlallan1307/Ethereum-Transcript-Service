@@ -85,3 +85,25 @@ Verify that you have the following programs (versions are to show test environme
 
 10. In the employer browser tab, you can see the transcript data on display
 11. **Important note:** The university server encrypts the transcript data using a combination of AES and RSA and the employer server decrypts it
+
+## Key Files
+
+ - server_student/js/app.js
+	 - Posts the contract on the blockchain
+ - server_transcript/app.js
+	 - Reads the contract on the blockchain
+	 - Encrypts the transcript data
+	 - Performs contract call to set the transcript data
+	 - Reads transcript database
+ - server_employer/app.js
+	 - Reads the contract on the blockchain
+	 - Decrypts the transcript data
+ - ether_contracts/contracts/TranscriptReq.sol
+	 - Ethereum Solidity contract code
+ - ether_contracts/build/contracts/TranscriptReq.json
+	 - The compiled contract code (Golden copy)
+	 - This can be translated to bytecode and compared to bytecode of contracts on the blockchain
+ - ether_contracts/build_fake/contracts/TranscriptReq.json
+	 - The compiled contract code of a maliciously modified contract
+	 - The contract removed the restriction that only the university to set the transcript data
+	 - This was generated to ensure that a modified contract posted by the student would be detectable by the other parties
