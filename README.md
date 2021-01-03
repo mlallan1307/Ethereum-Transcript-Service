@@ -3,6 +3,7 @@
 ## Analysis and Demonstration
 
 Read the report [HERE](https://github.com/mlallan1307/Ethereum-Transcript-Service/blob/master/Ethereum%20Transcript%20Service%20Report.docx) to learn more
+
 Video Demonstration [HERE](https://youtu.be/AFACljxJiXE) to see it in action
 
 ## Installation
